@@ -22,7 +22,25 @@ function quoteCompleted() {
   typedValueElement.value = '';
   typedValueElement.removeEventListener('input', typedValueEventHandler);
   typedValueElement.disabled = true;
-  alert('Finished!')
+
+  var finishedModal = document.getElementById("myModal");
+  var close = document.getElementsByClassName("close")[0];
+  var okButton = document.getElementById("okButton");
+  finishedModal.style.display = "block";
+
+  close.onclick = function() {
+    finishedModal.style.display = "none";
+  }
+
+  window.onclick = function(event) {
+    if (event.target == finishedModal) {
+      finishedModal.style.display = "none";
+    }
+  }
+
+  okButton.onclick = function() {
+    finishedModal.style.display = "none";
+  }
 }
 
 function typedValueEventHandler(event) {
