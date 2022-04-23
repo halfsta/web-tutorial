@@ -22,7 +22,12 @@ function init() {
   const storedRegion = localStorage.getItem('regionName');
 
   //set icon to be generic green
-  //todo
+  chrome.runtime.sendMessage({
+    action: 'updateIcon', 
+    value: {
+      color: 'green',
+    },
+  });
 
   if (storedApiKey === null | storedRegion === null) {
     //if we don't have the key, show the form
@@ -76,7 +81,7 @@ async function displayCarbonUsage(apiKey, region) {
       }).then((response) => {
         console.log("response obtained " + response.data.data.carbonIntensity);
         let CO2 = Math.floor(response.data.data.carbonIntensity);
-        //calculateColor(CO2);
+        calculateColor(CO2);
 
         loading.style.display = 'none';
         form.style.display = 'none';
@@ -92,4 +97,21 @@ async function displayCarbonUsage(apiKey, region) {
     results.style.display = 'none';
     errors.textContent = 'Sorry, we have no data for the region you have requested.';
   }
+}
+
+function calculateColor(value) {
+  let co2Scale = [0, 150, 600, 750, 800];
+  let colors = ['#2AA364', '#F5EB4D', '#9E4229', '#381D02', '#381D02'];
+
+  let closestNum = co2Scale.sort((a, b) => {
+    return Math.abs(a - value) - Math.abs(b - value);
+  })[0];
+  console.log(value + ' is closest to ' + closestNum);
+  let num = (element) => element > closestNum;
+  let scaleIndex = co2Scale.findIndex(num);
+
+  let closestColor = colors[scaleIndex];
+  console.log(scaleIndex, closestColor);
+
+  chrome.runtime.sendMessage({ action: 'updateIcon', value: { color: closestColor}});
 }
