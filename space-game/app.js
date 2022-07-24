@@ -55,6 +55,8 @@ class Hero extends GameObject {
 		this.type = 'Hero';
 		this.speed = { x: 0, y: 0 };
     this.cooldown = 0;
+    this.life = 3;
+    this.points = 0;
   }
   
   fire() {
@@ -72,6 +74,17 @@ class Hero extends GameObject {
   
   canFire() {
     return this.cooldown === 0;
+  }
+
+  decrementLife() {
+    this.life--;
+    if (this.life === 0) {
+      this.dead = true;
+    }
+  }
+
+  incrementPoints() {
+    this.points += 100;
   }
 }
 
@@ -171,7 +184,8 @@ const Messages = {
 
 let heroImg, 
     enemyImg, 
-    laserImg, 
+    laserImg,
+    lifeImg,
     canvas, 
     ctx, 
     gameObjects = [], 
@@ -220,10 +234,15 @@ function initGame() {
   })
 
   eventEmitter.on(Messages.COLLISION_ENEMY_LASER, (_, { first, second }) => {
-    console.log("on Messages.COLLISION_ENEMY_LASER");
     first.dead = true;
     second.dead = true;
+    hero.incrementPoints();
   })
+
+  eventEmitter.on(Messages.COLLISION_ENEMY_HERO, (_, { enemy }) => {
+    enemy.dead = true;
+    hero.decrementLife();
+  });
 }
 
 function intersectRect(r1, r2) {
@@ -243,7 +262,6 @@ function updateGateObjects() {
   lasers.forEach((l) => {
     enemies.forEach((m) => {
       if (intersectRect(l.rectFromGameObject(), m.rectFromGameObject())) {
-        console.log("emit Messages.COLLISION_ENEMY_LASER");
         eventEmitter.emit(Messages.COLLISION_ENEMY_LASER, {
           first: l,
           second: m,
@@ -252,7 +270,36 @@ function updateGateObjects() {
     });
   });
 
+  enemies.forEach(enemy => {
+    const heroRect = hero.rectFromGameObject();
+    if (intersectRect(heroRect, enemy.rectFromGameObject())) {
+      eventEmitter.emit(Messages.COLLISION_ENEMY_HERO, { enemy });
+    }
+  });
+
   gameObjects = gameObjects.filter(go => !go.dead);
+}
+
+function drawLife() {
+  // TODO, 35, 27
+  const START_POS = canvas.width - 180;
+  for(let i=0; i < hero.life; i++) {
+    ctx.drawImage(
+      lifeImg,
+      START_POS + (45 * (i+1) ),
+      canvas.height - 37);
+  }
+}
+
+function drawPoints() {
+  ctx.font = '30px Arial';
+  ctx.fillStyle = 'red';
+  ctx.textAlign = 'left';
+  drawText('Points: ' + hero.points, 10, canvas.height - 20);
+}
+
+function drawText(message, x, y) {
+  ctx.fillText(message, x, y);
 }
 
 window.onload = async () => {
@@ -262,6 +309,7 @@ window.onload = async () => {
   heroImg = await loadTexture('assets\\player.png');
   enemyImg = await loadTexture('assets\\enemyShip.png');
   laserImg = await loadTexture('assets\\laserRed.png');
+  lifeImg = await loadTexture('assets\\life.png');
 
   initGame();
   let gameLoopId = setInterval(() => {
@@ -270,5 +318,7 @@ window.onload = async () => {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     drawGameObjects(ctx);
     updateGateObjects();
+    drawPoints();
+    drawLife();
   }, 100);
 };
