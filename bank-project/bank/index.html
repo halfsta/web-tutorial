@@ -13,7 +13,26 @@
     <template id="login">
       <h1>Bank App</h1>
       <section>
-        <a href="/dashboard" onclick="onLinkClick(event)">Login</a>
+        <h2>Login</h2>
+        <form id="loginForm">
+          <label for="username">Username</label>
+          <input id="username" name="user" type="text">
+          <button>Login</button>
+        </form>
+
+        <hr/>
+        <h2>Register</h2>
+        <form id="registerForm" action="javascript:register()">
+          <label for="user">Username</label>
+          <input id="user" name="user" type="text" maxlength="20" required>
+          <label for="currency">Currency</label>
+          <input id="currency" name="currency" type="text" value="$" maxlength="5" required>
+          <label for="description">Description</label>
+          <input id="description" name="description" type="text" maxlength="100">
+          <label for="balance">Current Balance</label>
+          <input id="balance" name="balance" type="number" value="0">
+          <button>Register</button>
+        </form>
       </section>
     </template>
 
@@ -39,5 +58,6 @@
         </table>
       </section>
     </template>
+
   </body>
 </html>
