@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bank App</title>
     <script src="app.js" defer></script>
+    <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <!-- This is where you'll work -->
@@ -14,9 +15,10 @@
       <h1>Bank App</h1>
       <section>
         <h2>Login</h2>
-        <form id="loginForm">
+        <form id="loginForm" action="javascript:login()">
           <label for="username">Username</label>
           <input id="username" name="user" type="text">
+          <div id="loginError" role="alert"></div>
           <button>Login</button>
         </form>
 
@@ -31,6 +33,7 @@
           <input id="description" name="description" type="text" maxlength="100">
           <label for="balance">Current Balance</label>
           <input id="balance" name="balance" type="number" value="0">
+          <div id="registerError" role="alert"></div>
           <button>Register</button>
         </form>
       </section>
@@ -42,7 +45,8 @@
         <a href="/login" onclick="onLinkClick(event)">Logout</a>
       </header>
       <section>
-        Balance: 100$
+        Balance: <span id="balance"></span><span id="currency"></span>
+        <h2 id="description"></h2>
       </section>
       <section>
         <h2>Transactions</h2>
@@ -54,10 +58,17 @@
               <th>Amount</th>
             </tr>
           </thread>
-          <tbody></tbody>
+          <tbody id="transactions"></tbody>
         </table>
       </section>
     </template>
 
+    <template id="transaction">
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </template>
   </body>
 </html>

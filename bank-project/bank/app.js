@@ -1,6 +1,12 @@
+let state = Object.freeze({
+  account: null
+});
+
+const storageKey = 'savedAccount';
+
 const routes = {
   '/login': { templateId: 'login' },
-  '/dashboard': { templateId: 'dashboard' },
+  '/dashboard': { templateId: 'dashboard', init: refresh },
 };
 
 function updateRoute() {
@@ -8,7 +14,7 @@ function updateRoute() {
   const route = routes[path];
 
   if (!route) {
-    return navigate('/login');
+    return navigate('/dashboard');
   }
 
   const template = document.getElementById(route.templateId);
@@ -16,6 +22,10 @@ function updateRoute() {
   const app = document.getElementById('app');
   app.innerHTML = '';
   app.appendChild(view);
+
+  if (typeof route.init === 'function') {
+    route.init();
+  }
 }
 
 function navigate(path) {
@@ -36,10 +46,13 @@ async function register() {
   const result = await createAccount(jsonData);
 
   if (result.error) {
-    return console.log('An error occurred:', result.error);
+    return updateElement('registerError', 'An error occurred: ' + result.error);
   }
 
   console.log('Account create!', result);
+
+  updateState('account', result);
+  navigate('/dashboard');
 }
 
 async function createAccount(account) {
@@ -55,5 +68,105 @@ async function createAccount(account) {
   }
 }
 
-window.onpopstate = () => updateRoute();
-updateRoute();
+async function login() {
+  const loginForm = document.getElementById('loginForm');
+  const user = loginForm.user.value;
+  const data = await getAccount(user);
+
+  if (data.error) {
+    return updateElement('loginError', data.error);
+  }
+
+  updateState('account', data);
+  navigate('/dashboard');
+}
+
+async function getAccount(user) {
+  try {
+    const response = await fetch('//localhost:5000/api/accounts/' + encodeURIComponent(user));
+    return await response.json();
+  } catch (error) {
+    return { error: error.message || 'Unknown error' };
+  }
+}
+
+function updateElement(id, textOrNode) {
+  const element = document.getElementById(id);
+  element.textContent = ''; // Removes all children
+  element.append(textOrNode);
+}
+
+function updateDashboard() {
+  const account = state.account;
+  if (!account) {
+    return logout();
+  }
+
+  updateElement('description', account.description);
+  updateElement('balance', account.balance.toFixed(2));
+  updateElement('currency', account.currency);
+
+  const transactionRows = document.createDocumentFragment();
+  for (const transaction of account.transactions) {
+    const transactionRow = createTransactionRow(transaction);
+    transactionRows.appendChild(transactionRow);
+  }
+  updateElement('transactions', transactionRows);
+}
+
+function createTransactionRow(transaction) {
+  const template = document.getElementById('transaction');
+  const transactionRow = template.content.cloneNode(true);
+  const tr = transactionRow.querySelector('tr');
+  tr.children[0].textContent = transaction.date;
+  tr.children[1].textContent = transaction.object;
+  tr.children[2].textContent = transaction.amount.toFixed(2);
+  return transactionRow;
+}
+
+function updateState(property, newData) {
+  state = Object.freeze({
+    ...state,
+    [property]: newData
+  });
+
+  //console.log(state);
+  localStorage.setItem(storageKey, JSON.stringify(state.account));
+}
+
+function logout() {
+  updateState('account', null);
+  navigate('/login');
+}
+
+async function updateAccountData() {
+  const account = state.account;
+  if (!account) {
+    return logout();
+  }
+
+  const data = await getAccount(account.user);
+  if (data.error) {
+    return logout();
+  }
+
+  updateState('account', data);
+}
+
+async function refresh() {
+  await updateAccountData();
+  updateDashboard();
+}
+
+function init() {
+  const savedAccount = localStorage.getItem(storageKey);
+  if (savedAccount) {
+    updateState('account', JSON.parse(savedAccount));
+  }
+
+  // original init code
+  window.onpopstate = () => updateRoute();
+  updateRoute();
+}
+
+init();
