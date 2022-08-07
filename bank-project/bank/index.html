@@ -12,55 +12,70 @@
     <div id="app">Loading...</div>
 
     <template id="login">
-      <h1>Bank App</h1>
-      <section>
-        <h2>Login</h2>
-        <form id="loginForm" action="javascript:login()">
-          <label for="username">Username</label>
-          <input id="username" name="user" type="text">
-          <div id="loginError" role="alert"></div>
-          <button>Login</button>
-        </form>
+      <div class="login-page">
+        <div class="login-container">
+          <div class="login-title text-center">
+            <span>Bank App</span>
+            <img class="login-logo" src="logo.svg" alt="Squirrel Banking Logo">
+          </div>
 
-        <hr/>
-        <h2>Register</h2>
-        <form id="registerForm" action="javascript:register()">
-          <label for="user">Username</label>
-          <input id="user" name="user" type="text" maxlength="20" required>
-          <label for="currency">Currency</label>
-          <input id="currency" name="currency" type="text" value="$" maxlength="5" required>
-          <label for="description">Description</label>
-          <input id="description" name="description" type="text" maxlength="100">
-          <label for="balance">Current Balance</label>
-          <input id="balance" name="balance" type="number" value="0">
-          <div id="registerError" role="alert"></div>
-          <button>Register</button>
-        </form>
-      </section>
+          <section class="login-content">
+            <h2 class="text-center">Login</h2>
+            <form id="loginForm" action="javascript:login()">
+              <label for="username">Username</label>
+              <input id="username" name="user" type="text" required>
+              <div id="loginError" role="alert"></div>
+              <button>Login</button>
+            </form>
+  
+            <p class="login-separator text-center"><span>OR</span></p>
+            <h2 class="text-center">Register</h2>
+            <form id="registerForm" action="javascript:register()">
+              <label for="user">Username</label>
+              <input id="user" name="user" type="text" maxlength="20" required>
+              <label for="currency">Currency</label>
+              <input id="currency" name="currency" type="text" value="$" maxlength="5" required>
+              <label for="description">Description</label>
+              <input id="description" name="description" type="text" maxlength="100">
+              <label for="balance">Current Balance</label>
+              <input id="balance" name="balance" type="number" value="0">
+              <div id="registerError" role="alert"></div>
+              <button>Register</button>
+            </form>
+          </section>
+
+        </div>
+      </div>
     </template>
 
     <template id="dashboard">
-      <header>
-        <h1>Bank App</h1>
-        <a href="/login" onclick="onLinkClick(event)">Logout</a>
-      </header>
-      <section>
-        Balance: <span id="balance"></span><span id="currency"></span>
-        <h2 id="description"></h2>
-      </section>
-      <section>
-        <h2>Transactions</h2>
-        <table>
-          <thread>
-            <tr>
-              <th>Date</th>
-              <th>Object</th>
-              <th>Amount</th>
-            </tr>
-          </thread>
-          <tbody id="transactions"></tbody>
-        </table>
-      </section>
+      <div class="dashboard-page">
+
+        <header class="dashboard-header">
+          <span class="dashboard-title">Bank App</span>
+          <img class="dashboard-logo" src="logo.svg" alt="Squirrel Banking Logo">
+          <button onclick="logout()">Logout</button>
+        </header>
+        <section class="balance">
+          <div>Balance:</div> 
+          <span id="balance"></span><span id="currency"></span>
+        </section>
+        <h2 id="description" class="transactions-title"></h2>
+        <section>
+          <table class="transactions-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Object</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody id="transactions"></tbody>
+          </table>
+        </section>
+
+      </div>
+      
     </template>
 
     <template id="transaction">
