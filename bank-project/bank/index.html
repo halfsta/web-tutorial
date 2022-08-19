@@ -50,7 +50,6 @@
 
     <template id="dashboard">
       <div class="dashboard-page">
-
         <header class="dashboard-header">
           <span class="dashboard-title">Bank App</span>
           <img class="dashboard-logo" src="logo.svg" alt="Squirrel Banking Logo">
@@ -60,7 +59,10 @@
           <div>Balance:</div> 
           <span id="balance"></span><span id="currency"></span>
         </section>
-        <h2 id="description" class="transactions-title"></h2>
+        <div class="transactions-title">
+          <h2 id="description"></h2>
+          <button onclick="addTransaction()">Add Transaction</button>
+        </div>
         <section>
           <table class="transactions-table">
             <thead>
@@ -73,9 +75,25 @@
             <tbody id="transactions"></tbody>
           </table>
         </section>
-
       </div>
-      
+      <section id="addTransactionDialog" class="dialog">
+        <div class="dialog-content">
+          <h2 class="text-center">Add Transaction</h2>
+          <form id="addTransactionForm" action="javascript:void(0)">
+            <label for="date">DATE</label>
+            <input id="date" name="date" type="date" required>
+            <label for="object">OBJECT</label>
+            <input id="object" name="object" type="text" required>
+            <label for="amount">AMOUNT (USE NEGATIVE VALUE FOR DEBIT)</label>
+            <input id="amount" name="amount" type="number" value="0" required>
+            <div id="transactionError" class="error" role="alert"></div>
+            <div class="dialog-buttons">
+              <button type="button" class="button-alt" formaction="javascript:cancelTransaction()" formnovalidate>Cancel</button>
+              <button formaction="javascript:confirmTransaction()">OK</button>
+            </div>
+          </form>
+        </div>
+      </section>
     </template>
 
     <template id="transaction">

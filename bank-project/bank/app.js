@@ -68,6 +68,19 @@ async function createAccount(account) {
   }
 }
 
+async function createTransaction(user, transaction) {
+  try {
+    const response = await fetch('//localhost:5000/api/accounts/' + user + '/transactions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: transaction
+    });
+    return await response.json();
+  } catch (error) {
+    return { error: error.message || 'Unknown error' };
+  }
+}
+
 async function login() {
   const loginForm = document.getElementById('loginForm');
   const user = loginForm.user.value;
@@ -151,6 +164,45 @@ async function updateAccountData() {
   }
 
   updateState('account', data);
+}
+
+function addTransaction() {
+  const dialog = document.getElementById('addTransactionDialog');
+  dialog.classList.add('show');
+
+  const transactionForm = document.getElementById('addTransactionForm');
+  transactionForm.reset();
+
+  transactionForm.date.valueAsDate = new Date();
+}
+
+async function cancelTransaction() {
+  console.log('cancel button');
+  const dialog = document.getElementById('addTransactionDialog');
+  dialog.classList.remove('show');
+}
+
+async function confirmTransaction() {
+  const dialog = document.getElementById('addTransactionDialog');
+  dialog.classList.remove('show');
+
+  const transactionForm = document.getElementById('addTransactionForm');
+
+  const formData = new FormData(transactionForm);
+  const jsonData = JSON.stringify(Object.fromEntries(formData));
+  const data = await createTransaction(state.account.user, jsonData);
+
+  if (data.error) {
+    return updateElement('transactionError', data.error);
+  }
+
+  const newAccount = {
+    ...state.account,
+    balance: state.account.balance + data.amount,
+    transactions: [...state.account.transactions, data]
+  }
+  updateState('account', newAccount);
+  updateDashboard();
 }
 
 async function refresh() {
