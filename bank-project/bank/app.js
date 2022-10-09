@@ -4,6 +4,9 @@ let state = Object.freeze({
 
 const storageKey = 'savedAccount';
 
+const loginPath = '/login';
+const dashboardPath = '/dashboard';
+
 const routes = {
   '/login': { templateId: 'login' },
   '/dashboard': { templateId: 'dashboard', init: refresh },
@@ -14,7 +17,7 @@ function updateRoute() {
   const route = routes[path];
 
   if (!route) {
-    return navigate('/dashboard');
+    return navigate(dashboardPath);
   }
 
   const template = document.getElementById(route.templateId);
@@ -52,7 +55,7 @@ async function register() {
   console.log('Account create!', result);
 
   updateState('account', result);
-  navigate('/dashboard');
+  navigate(dashboardPath);
 }
 
 async function createAccount(account) {
@@ -91,7 +94,7 @@ async function login() {
   }
 
   updateState('account', data);
-  navigate('/dashboard');
+  navigate(dashboardPath);
 }
 
 async function getAccount(user) {
@@ -149,7 +152,7 @@ function updateState(property, newData) {
 
 function logout() {
   updateState('account', null);
-  navigate('/login');
+  navigate(loginPath);
 }
 
 async function updateAccountData() {
