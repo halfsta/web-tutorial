@@ -6,13 +6,13 @@ const pkg = require('./package.json');
 const path = require('path');
 
 // App constants
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5050;
 const apiPrefix = '/api';
 
 // Store data in-memory, not suited for production use!
 const db = {
-  test: {
-    user: 'test',
+  supa9: {
+    user: 'supa9',
     currency: '$',
     description: `Test account`,
     balance: 75,

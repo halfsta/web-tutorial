@@ -60,7 +60,7 @@ async function register() {
 
 async function createAccount(account) {
   try {
-    const response = await fetch('//localhost:5000/api/accounts', {
+    const response = await fetch('//localhost:5050/api/accounts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: account
@@ -73,7 +73,7 @@ async function createAccount(account) {
 
 async function createTransaction(user, transaction) {
   try {
-    const response = await fetch('//localhost:5000/api/accounts/' + user + '/transactions', {
+    const response = await fetch('//localhost:5050/api/accounts/' + user + '/transactions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: transaction
@@ -99,7 +99,7 @@ async function login() {
 
 async function getAccount(user) {
   try {
-    const response = await fetch('//localhost:5000/api/accounts/' + encodeURIComponent(user));
+    const response = await fetch('//localhost:5050/api/accounts/' + encodeURIComponent(user));
     return await response.json();
   } catch (error) {
     return { error: error.message || 'Unknown error' };
